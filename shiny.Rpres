@@ -1,0 +1,47 @@
+International Tourism - Number of Arrivals in India between the Years 2000 to 2014
+========================================================
+author: Bhuwanesh Man Rajbhandari
+date: 6th May 2016
+autosize: true
+
+Brief Description of my Project
+========================================================
+
+- In my first Shiny Application I am projecting an interactive visualization of International Tourism in India between the years 2000 to 2014. 
+- I have attained this data set from the database of [The World Bank](http://data.worldbank.org/indicator/ST.INT.ARVL). 
+- I have updated the data formate to my need without manipulating the data. The data field contains Year, CountryName, CountryCode, Region, IncomeGroup and NoOfVisitors
+- My analysis shows the Aggregations between the number of visitors and the country region they belong to.
+- Another analysis shows the Aggregation between the Income Group and number of visitors of selected Country Region
+
+
+Code Segments of My Project
+========================================================
+
+```{r}
+indiatourism <- read.csv('indiatourism.csv', stringsAsFactors = FALSE)
+indiatourism$NoOfVisitors <- as.numeric(indiatourism$NoOfVisitors)
+indiatourism$Region <- as.factor(indiatourism$Region)
+indiatourism$IncomeGroup <- factor(indiatourism$IncomeGroup
+                        , levels = c("High income","Low income","Upper middle income","Others","Lower middle income")
+                        , labels = c("High income","Low income","Upper middle income","Others","Lower middle income"))
+names(indiatourism)
+```
+
+Summary of data file
+========================================================
+
+```{r}
+str(indiatourism)
+```
+
+Graph: Number of visitors Vs Country Region
+========================================================
+
+```{r, echo=FALSE,out.height="1500px",out.width="800px"}
+library(ggplot2)
+#Aggregates the No of Visitors arrival in India according to their Country Region
+aggregated_data <- aggregate(NoOfVisitors ~ Region, data = indiatourism, FUN = sum)
+CountryRegion <- aggregated_data[order(-aggregated_data$NoOfVisitors),]
+CountryRegion$Region <- factor(CountryRegion$Region, levels = CountryRegion$Region)
+ggplot(CountryRegion, aes(x = Region, y = NoOfVisitors)) + geom_bar(stat = "identity", fill = "red") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +ylab("Number of Visitors")
+```
